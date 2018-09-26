@@ -26,7 +26,7 @@ import java.util.Random;
 public class RandomNumber {
 
     // generate a random number
-    public static int generateRandomLocation(int maxInt) {
+    public static int generateRandomNumber(int maxInt) {
         // create a new random number object
         if (maxInt > 0) {
             Random r = new Random();

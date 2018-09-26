@@ -8,7 +8,9 @@ package quizes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -26,10 +28,20 @@ public class DistractionQuiz {
     private static int score = 0;
     private static int totalQuestionsAsked = 0;
     private static int totalTestSubjects = 0;
+
     private static String wordBank[] = {"String1", "String2", "String4", "String3"};
 
+    private static Map<String, Map<String, String>> statementMap = new HashMap<>();
+
     public static void main(String[] args) {
-        Map<String, Map<String, String>> statementMap = new HashMap<>();
+
+        loadTest();
+        //printAllStatements();
+        startQuiz();
+    }
+
+    private static void loadTest() {
+        resetTest();
         Map<String, String> questionMap = new HashMap<>();
         questionMap.put("Question1", "CorrectAnswer1");
         questionMap.put("Question2", "CorrectAnswer2");
@@ -48,25 +60,49 @@ public class DistractionQuiz {
 
         statementMap.put("This is the third statement", questionMap);
 
-        for (Map.Entry<String, Map<String, String>> entry : statementMap.entrySet()) {
-            System.out.println(entry.getKey() + "\n");
-            sleep(STATEMENT_DISPLAY_TIME_SECONDS);
-            System.out.println(CLEAR_SCREEN);
-            System.out.println("Now you will be prompted with two questions about the previous statement. \nEach question has a word and 4 choices. \nChoose the word that appeared with the sentence.");
-            sleep(INSTRUCTION_TIME_SECONDS);
-            System.out.println(CLEAR_SCREEN);
-            for (Map.Entry<String, String> questions : entry.getValue().entrySet()) {
-                System.out.println("What word was associated with " + questions.getKey() + "?");
-                if (printPossibleAnswers(generatePossibleAnswers(questions.getValue()), questions.getValue())) {
-                    score++;
-                }
-                totalQuestionsAsked++;
-                System.out.println(CLEAR_SCREEN);
-                sleep(WAIT_AFTER_ANSWER);
-                
-            }
+    }
+
+    private static void resetTest() {
+        statementMap = new HashMap<>();
+
+    }
+
+    private static void resetScores() {
+        score = 0;
+        totalQuestionsAsked = 0;
+        totalTestSubjects = 0;
+
+    }
+
+    private static void printAllStatements() {
+        Set keySet = statementMap.keySet();
+        Iterator<String> keyIterator = keySet.iterator();
+
+        System.out.println("Here is a list of statements and questions and their answers used in this program.");
+        while (keyIterator.hasNext()) {
+            String statement = keyIterator.next();
+            System.out.println(statement);
+            Map<String, String> questionMap = statementMap.get(statement);
+            printAllQuestions(questionMap);
+
+            System.out.println("\n\n");
+        }
+
+    }
+
+    private static void printAllQuestions(Map<String, String> questionMap) {
+        Set keySet = questionMap.keySet();
+        Iterator<String> keyIterator = keySet.iterator();
+
+        System.out.println();
+        while (keyIterator.hasNext()) {
+            String question = keyIterator.next();
+            System.out.println("Question: " + question + generateWhiteSpace(30, question.length()) + "Answer: " + questionMap.get(question));
 
         }
+
+        sleep(5);
+
     }
 
     private static ArrayList generatePossibleAnswers(String correctAnswer) {
@@ -133,6 +169,28 @@ public class DistractionQuiz {
             whiteSpace = whiteSpace + " ";
         }
         return whiteSpace;
+    }
+
+    public static void startQuiz() {
+        for (Map.Entry<String, Map<String, String>> entry : statementMap.entrySet()) {
+            System.out.println(entry.getKey() + "\n");
+            sleep(STATEMENT_DISPLAY_TIME_SECONDS);
+            System.out.println(CLEAR_SCREEN);
+            System.out.println("Now you will be prompted with two questions about the previous statement. \nEach question has a word and 4 choices. \nChoose the word that appeared with the sentence.");
+            sleep(INSTRUCTION_TIME_SECONDS);
+            System.out.println(CLEAR_SCREEN);
+            for (Map.Entry<String, String> questions : entry.getValue().entrySet()) {
+                System.out.println("What word was associated with " + questions.getKey() + "?");
+                if (printPossibleAnswers(generatePossibleAnswers(questions.getValue()), questions.getValue())) {
+                    score++;
+                }
+                totalQuestionsAsked++;
+                System.out.println(CLEAR_SCREEN);
+                sleep(WAIT_AFTER_ANSWER);
+
+            }
+
+        }
     }
 
     public static void sleep(int timeInSeconds) {

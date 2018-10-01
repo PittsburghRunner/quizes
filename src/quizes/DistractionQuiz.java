@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import quizes.models.StatementModel;
 
 /**
  *
@@ -31,7 +32,7 @@ public class DistractionQuiz {
 
     private static String wordBank[] = {"String1", "String2", "String4", "String3"};
 
-    private static Map<String, Map<String, String>> statementMap = new HashMap<>();
+    private static ArrayList<StatementModel> statements = new ArrayList<>();
 
     public static void main(String[] args) {
 
@@ -42,28 +43,28 @@ public class DistractionQuiz {
 
     private static void loadTest() {
         resetTest();
-        Map<String, String> questionMap = new HashMap<>();
-        questionMap.put("Question1", "CorrectAnswer1");
-        questionMap.put("Question2", "CorrectAnswer2");
+        StatementModel statement = new StatementModel("This is the first statement");
+        statement.getQuestionMap().put("Question1", "CorrectAnswer1");
+        statement.getQuestionMap().put("Question2", "CorrectAnswer2");
 
-        statementMap.put("This is the first statement", questionMap);
+        statements.add(statement);
 
-        questionMap = new HashMap<>();
-        questionMap.put("Question3", "CorrectAnswer3");
-        questionMap.put("Question4", "CorrectAnswer4");
+        statement = new StatementModel("This is the second statement");
+        statement.getQuestionMap().put("Question3", "CorrectAnswer3");
+        statement.getQuestionMap().put("Question4", "CorrectAnswer4");
 
-        statementMap.put("This is the second statement", questionMap);
+        statements.add(statement);
 
-        questionMap = new HashMap<>();
-        questionMap.put("Question5", "CorrectAnswer5");
-        questionMap.put("Question6", "CorrectAnswer6");
+        statement = new StatementModel("This is the third statement");
+        statement.getQuestionMap().put("Question5", "CorrectAnswer5");
+        statement.getQuestionMap().put("Question6", "CorrectAnswer6");
 
-        statementMap.put("This is the third statement", questionMap);
+        statements.add(statement);
 
     }
 
     private static void resetTest() {
-        statementMap = new HashMap<>();
+        statements = new ArrayList<>();
 
     }
 
@@ -75,14 +76,13 @@ public class DistractionQuiz {
     }
 
     private static void printAllStatements() {
-        Set keySet = statementMap.keySet();
-        Iterator<String> keyIterator = keySet.iterator();
+        Iterator<StatementModel> iter = statements.iterator();
 
         System.out.println("Here is a list of statements and questions and their answers used in this program.");
-        while (keyIterator.hasNext()) {
-            String statement = keyIterator.next();
-            System.out.println(statement);
-            Map<String, String> questionMap = statementMap.get(statement);
+        while (iter.hasNext()) {
+            StatementModel statement = iter.next();
+            System.out.println(statement.getStatement());
+            Map<String, String> questionMap = statement.getQuestionMap();
             printAllQuestions(questionMap);
 
             System.out.println("\n\n");
@@ -172,14 +172,16 @@ public class DistractionQuiz {
     }
 
     public static void startQuiz() {
-        for (Map.Entry<String, Map<String, String>> entry : statementMap.entrySet()) {
-            System.out.println(entry.getKey() + "\n");
+        Iterator<StatementModel> iter = statements.iterator();
+        while (iter.hasNext()){
+            StatementModel statement = iter.next();
+            System.out.println(statement.getStatement() + "\n");
             sleep(STATEMENT_DISPLAY_TIME_SECONDS);
             System.out.println(CLEAR_SCREEN);
             System.out.println("Now you will be prompted with two questions about the previous statement. \nEach question has a word and 4 choices. \nChoose the word that appeared with the sentence.");
             sleep(INSTRUCTION_TIME_SECONDS);
             System.out.println(CLEAR_SCREEN);
-            for (Map.Entry<String, String> questions : entry.getValue().entrySet()) {
+            for (Map.Entry<String, String> questions : statement.getQuestionMap().entrySet()) {
                 System.out.println("What word was associated with " + questions.getKey() + "?");
                 if (printPossibleAnswers(generatePossibleAnswers(questions.getValue()), questions.getValue())) {
                     score++;

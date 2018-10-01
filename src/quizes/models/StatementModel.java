@@ -5,10 +5,26 @@
  */
 package quizes.models;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  *
  * @author christopher.eckles
  */
 public class StatementModel {
-    
+    String statement = "";
+    Map<String, String> questionMap = new HashMap<>();
+
+public StatementModel(String statement){
+    this.statement = statement;
+}    
+
+    public String getStatement() {
+        return statement;
+    }
+
+    public Map<String, String> getQuestionMap() {
+        return questionMap;
+    }
 }
